@@ -41,6 +41,7 @@ $ cd /
 $ sudo tar -xzvf /tmp/Octo/ydb_dir.tar.gz
 $ sudo chown $USER:$USER -Rh /ydbdir
 $ cd /ydbdir 
+$ sudo chown root:root yottadb.pc
 $ sudo mv yottadb.pc /usr/share/pkgconfig/
 ```
 
