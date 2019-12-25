@@ -39,6 +39,7 @@ $ sudo tar -xzvf /tmp/Octo/ydb_dist.tar.gz
 ```bash
 $ cd /
 $ sudo tar -xzvf /tmp/Octo/ydb_dir.tar.gz
+$ sudo chown $USER:$USER -Rh /ydbdir
 $ cd /ydbdir 
 $ sudo mv yottadb.pc /usr/share/pkgconfig/
 ```
