@@ -34,13 +34,13 @@ $ git clone https://github.com/mrockstyle/Octo
 ### 1.3 Install YottaDB + Octo
 ```bash
 $ cd /
-$ sudo tar -xzvf /tmp/Octo/ydb_dist.tar.gz
+$ sudo tar -xzvf /tmp/Octo/ydb_dist.tgz
 ```
 
 ### 1.4 Setup YottaDB Instance
 ```bash
 $ cd /
-$ sudo tar -xzvf /tmp/Octo/ydb_dir.tar.gz
+$ sudo tar -xzvf /tmp/Octo/ydb_dir.tgz
 $ sudo chown ydbadm:ydbadm -Rh /ydbdir
 $ cd /ydbdir 
 $ sudo chown root:root yottadb.pc
