@@ -1,13 +1,17 @@
 #!/bin/bash
 
+
+ydb_ver=$(1:-r130)
+
+
 ### check os ###
 osfile="/etc/os-release"
 osid=`grep -w ID $osfile | cut -d= -f2 | cut -d'"' -f2`
 if [ -f "$osfile" ] ; then
 	if [ "ubuntu" = "${osid}" ] ; then
-		ydb_dist_tar=ydb_dist_r128_ubuntu.tgz
+		ydb_dist_tar=ydb_dist_${ydb_ver}_ubuntu.tgz
 	elif [ "rhel" = "${osid}" ] ; then
-		ydb_dist_tar=ydb_dist_r128_rhel.tgz
+		ydb_dist_tar=ydb_dist_${ydb_ver}_rhel.tgz
 	else
 		echo "OS not supported"
 		exit 1
