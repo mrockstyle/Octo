@@ -3,7 +3,7 @@
 
 ########### YottaDB base parameter ###########
 
-export ydb_dist=/ydb/ydb_dist_r130
+export ydb_dist=/ydb/ydb_dist_r128
 export ydb_dir=/ydbdir
 export ydb_gbldir=${ydb_dir}/gbls/mumps.gld
 export ydb_routines="${ydb_dir}/rtns/obj(${ydb_dir}/rtns) ${ydb_dist} ${ydb_dist}/plugin/r"
@@ -18,7 +18,7 @@ export PATH="${ydb_dist}:${PATH}"
 export ydb_repl_instance=${ydb_dir}/gbls/REPL_INSTANCE.DAT
 export ydb_repl_instname=YDB_DC
 
-export multi_site="N"
+export multi_site="Y"
 
 if [ ${multi_site} = "N" ]
 then
@@ -63,3 +63,7 @@ export NOJNL=""
 export DB_PATH=/global/ydbdir_db
 export MUMPS_DATA=${DB_PATH}/mumps.data
 export MUMPS_OCTO=${DB_PATH}/mumps.octo
+export MUMPS_BIZLOG=${DB_PATH}/mumps.bizlog
+export MUMPS_LOG=${DB_PATH}/mumps.log
+export MUMPS_CONFIG=${DB_PATH}/mumps.config
+export MUMPS_TMP=${DB_PATH}/mumps.tmp
