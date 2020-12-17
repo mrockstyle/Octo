@@ -1,0 +1,39 @@
+#!/bin/bash
+
+. ${ydb_dir}/ydbenv
+
+check_source_server(){
+	
+	### Check aliveness of source server using mupip command ###
+
+	function="Check Source Server Aliveness"
+
+	mupip replicate -source -checkhealth
+}
+
+check_receiver_server(){
+
+	### Check aliveness of receiver server using mupip command ###
+
+	function="Check Receiver Server Aliveness"
+
+	mupip replicate -receiver -checkhealth
+}
+
+check_source_backlog(){
+
+	### Check backlog of source server using mupip command ###
+
+	function="Check Source Server Backlog"
+
+	mupip replicate -source -show
+}
+
+check_receiver_backlog(){
+
+	### Check backlog of receiver server using mupip command ###
+
+	function="Check Receiver Server Backlog"
+
+	mupip replicate -receiver -show
+}

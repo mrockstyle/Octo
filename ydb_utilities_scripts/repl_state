@@ -1,0 +1,23 @@
+#!/bin/bash
+
+reg=`${UTIL_DIR}/show_region`
+
+for region in ${reg}
+do
+
+out_file=/tmp/repl_state_${region}_`date +%Y%m%d`.out
+err_file=/tmp/repl_state_${region}_`date +%Y%m%d`.err
+
+	dse 2>${err_file} 1>${out_file} <<EOF
+	f -r=${region}
+	d -f
+	exit
+EOF
+
+	echo ${region} Journal is `grep "Journal State" ${err_file} | awk '{print $3}'`
+	echo ${region} Replication is `grep "Replication State" ${err_file} | awk '{print $3}'`
+
+	rm -f ${err_file} ${out_file}
+
+done
+

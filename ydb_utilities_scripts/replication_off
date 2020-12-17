@@ -1,0 +1,28 @@
+#!/bin/bash
+
+reg=`${UTIL_DIR}/show_region`
+
+for region in ${reg}
+do
+	SKIP="N"
+        for SKIP_REGION in `echo "$NOJNL" | tr "," " "`
+        do
+                if [ "$region:" = "$SKIP_REGION:" ]
+                then
+                        SKIP="Y"
+                fi
+        done
+
+
+	if [  "$SKIP:" = "Y:"  ]
+        then
+                continue
+        fi
+
+        $ydb_dist/mupip set -region -replication=off -journal=off $region
+        if [ $? -ne 0 ]
+        then
+                echo "ERROR- mupip failed to execute correctly\n"
+                STAT=1
+        fi
+done

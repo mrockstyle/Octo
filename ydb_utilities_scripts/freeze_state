@@ -1,0 +1,31 @@
+#!/bin/bash
+
+reg=`${UTIL_DIR}/show_region`
+
+for region in ${reg}
+do
+
+out_file=/tmp/freeze_state_${region}_`date +%Y%m%d`.out
+err_file=/tmp/freeze_state_${region}_`date +%Y%m%d`.err
+
+	dse 2>${err_file} 1>${out_file} <<EOF
+	f -r=${region}
+	d -f
+	exit
+EOF
+
+	STATUS=`grep "Freeze match" ${err_file} | awk '{print $3}'`
+	
+	if [ ${STATUS} == "0x00000000" ]
+	then
+		FREEZE="UNFROZEN"
+	else
+		FREEZE="FROZEN"
+	fi
+
+	echo ${region} is  ${FREEZE}
+
+	rm -f ${err_file} ${out_file}
+
+done
+

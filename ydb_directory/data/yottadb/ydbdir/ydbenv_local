@@ -1,0 +1,65 @@
+#!/bin/bash
+
+
+########### YottaDB base parameter ###########
+
+export ydb_dist=/ydb/ydb_dist_r128
+export ydb_dir=/ydbdir
+export ydb_gbldir=${ydb_dir}/gbls/mumps.gld
+export ydb_routines="${ydb_dir}/rtns/obj(${ydb_dir}/rtns) /ydb/ydbpip/rtns/obj(/ydb/ydbpip/rtns) ${ydb_dist} ${ydb_dist}/plugin/r"
+export ydb_log=${ydb_dir}/log
+export ydb_tmp=${ydb_dir}/ydbtmp
+export ydb_prompt='YDB> '
+export PATH="${ydb_dist}:${PATH}"
+
+
+########### Replication Parameter ###########
+
+export ydb_repl_instance=${ydb_dir}/gbls/REPL_INSTANCE.DAT
+export ydb_repl_instname=YDB_A
+
+export multi_site="N"
+
+if [ ${multi_site} = "N" ]
+then
+	export secondary_ip=127.0.0.1
+	export ydb_repl_secondary_instname=YDBDR
+	export repl_port=8989
+	export repl_listen_port=8989
+fi
+
+
+############# YottaDB Alias ################
+
+alias dse="$ydb_dist/dse"
+alias gde="$ydb_dist/mumps -run GDE"
+alias ydb="$ydb_dist/mumps -dir"
+alias lke="$ydb_dist/lke"
+alias mupip="$ydb_dist/mupip"
+alias octo="$ydb_dist/plugin/bin/octo"
+
+
+########### Additional Parameter For Plugin and External Call #########
+
+export GTMXC_extcall="/ydb/ydbpip/extcall/extcall.xc"
+
+export LD_LIBRARY_PATH=/ydb/ydbpip/extcall:${gtm_dist}
+export LD_LIBRARY_PATH=${ydb_dist}:${LD_LIBRARY_PATH}
+
+export ydb_ci=${ydb_dist}/plugin/ydbocto.ci
+export ydb_xc_ydbposix=${ydb_dist}/plugin/ydbposix.xc
+
+
+########### Parameter for Custom Utility Scripts #############
+
+export UTIL_DIR=/ydb/scripts
+export PATH="${UTIL_DIR}:${PATH}"
+
+export JNL_DIR=/global/ydbdir_journal
+export NOJNL=""
+
+
+########### Database file ###########
+export DB_PATH=/global/ydbdir_db
+export MUMPS_DATA=${DB_PATH}/mumps.data
+export MUMPS_OCTO=${DB_PATH}/mumps.octo

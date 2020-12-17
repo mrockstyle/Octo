@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#JNL_DIR=/ydbinst/journal
+reg=`${UTIL_DIR}/show_region`
+
+. ${ydb_dir}/ydbenv
+
+for region in ${reg}
+do
+        SKIP="N"
+        for SKIP_REGION in `echo "$NOJNL" | tr "," " "`
+        do
+                if [ "$region:" = "$SKIP_REGION:" ]
+                then
+                        SKIP="Y"
+                fi
+        done
+
+        if [ "$SKIP:" = "Y:" ]
+        then
+                continue
+        fi
+
+        REGION_NAME=`echo ${region} | tr '[A-Z]' '[a-z]'`
+        JOURNAL_FILE=${JNL_DIR}/${REGION_NAME}.mjl
+
+        $ydb_dist/mupip set -reg -replication=ON -journal=on,before,enable,alloc=15000,exten=15000,align=4096,buff=5000,sync_io,auto=16384,epoch=90,file=${JOURNAL_FILE} ${region}
+        #$ydb_dist/mupip set -reg -replication=ON -journal=on,before,enable,alloc=15000,exten=15000,align=4096,buff=5000,sync_io,auto=524288,epoch=90,file=${JOURNAL_FILE} ${region}
+        #$ydb_dist/mupip set -reg -replication=ON -journal=on,before,enable,alloc=4194303,exten=8192,auto=8388607,buff=32768,epoch=90,nosync_io,file=${JOURNAL_FILE} ${REG}
+        if [ $? -ne 0 ]
+        then
+                echo "ERROR - mupip failed to execute correctly\n"
+                $ydb_dist/mupip set -replication=off -reg '*'
+                $ydb_dist/mupip set -nojournal -reg '*'
+                exit 1
+        fi
+done

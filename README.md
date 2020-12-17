@@ -16,12 +16,10 @@ The YottaDB Octo Database Management System is a SQL access layer built on top o
 ---
 
 ## 1.   Setup Step
-### 1.1 Install prerequiresite packages and create nessesary user
+### 1.1 Install prerequiresite packages
 ```bash
 $ sudo apt-get update
 $ sudo apt-get install binutils libconfig-dev
-$ sudo groupadd -g 1001 ydbadm
-$ sudo useradd -u 1001 -g 1001 ydbadm
 ```
 
 
@@ -34,14 +32,14 @@ $ git clone https://github.com/mrockstyle/Octo
 ### 1.3 Install YottaDB + Octo
 ```bash
 $ cd /
-$ sudo tar -xzvf /tmp/Octo/ydb_dist.tgz
+$ sudo tar -xzvf /tmp/Octo/ydb_dist.tar.gz
 ```
 
 ### 1.4 Setup YottaDB Instance
 ```bash
 $ cd /
-$ sudo tar -xzvf /tmp/Octo/ydb_dir.tgz
-$ sudo chown ydbadm:ydbadm -Rh /ydbdir
+$ sudo tar -xzvf /tmp/Octo/ydb_dir.tar.gz
+$ sudo chown $USER:$USER -Rh /ydbdir
 $ cd /ydbdir 
 $ sudo chown root:root yottadb.pc
 $ sudo mv yottadb.pc /usr/share/pkgconfig/

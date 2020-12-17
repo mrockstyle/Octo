@@ -1,0 +1,4 @@
+Hostname|IP Address|Primary instance name|Secondary instance name|Replication port|Listen port
+ip-172-18-1-38|172.18.1.38|YDB_A|YDB_B|8989|9000
+ip-172-18-1-38|172.18.1.38|YDB_B|YDB_A|9000|8989
+ip-172-18-1-38|172.18.1.38|YDB_C|YDB_A|9000|8988

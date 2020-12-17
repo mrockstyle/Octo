@@ -1,0 +1,11 @@
+prefix=/ydb/ydb_dist_r128
+
+exec_prefix=${prefix}
+includedir=${prefix}
+libdir=${exec_prefix}
+
+Name: YottaDB
+Description: YottaDB database library
+Version: r1.28
+Cflags: -I${includedir}
+Libs: -L${libdir} -lyottadb -Wl,-rpath,${libdir}

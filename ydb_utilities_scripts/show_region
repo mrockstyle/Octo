@@ -1,0 +1,25 @@
+#!/bin/bash
+
+err_file=/tmp/show_region_`date +%Y%m%d`.err
+out_file=/tmp/show_region_`date +%Y%m%d`.out
+
+if [[  -z ${ydb_dist} ]]
+then 
+	ydb_dist=${gtm_dist}
+elif [[  -z ${ydb_dist} ]]
+then
+	echo "Plase defined ydb_dist/gtm_dist parameter"
+	exit 1
+fi
+
+
+${ydb_dist}/mumps -run GDE show -region 2>${err_file} 1>${out_file}
+
+if [[ ! -z ${out_file} ]]
+then
+	cat ${out_file} |  awk 'NR>8 {print $1}'
+else
+	cat ${err_file}
+fi	
+
+rm -rf ${out_file} ${err_file}

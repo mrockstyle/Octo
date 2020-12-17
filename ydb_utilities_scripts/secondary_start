@@ -1,0 +1,46 @@
+#!/bin/bash
+
+SCRIPTS_PATH=${UTIL_DIR}
+LOG_PATH=${ydb_dir}/log
+LOG_FILE=${LOG_PATH}/start_replication.log_`date +"%y%m%d-%H%M%S"`
+
+filter=$1
+
+. ${SCRIPTS_PATH}/replication_check
+. ${SCRIPTS_PATH}/replication_start
+
+
+if [ ${multi_site} == "N" ]
+then
+	echo "Start replication in SECONDARY mode"
+
+	start_replication_in_secondary_mode > ${LOG_FILE} 2>&1
+	
+	cat ${LOG_FILE}
+
+	check_source_server	
+	
+	check_receiver_server
+
+	stat_check
+
+elif [ ${multi_site} == "Y" ]
+then
+
+	export MODE="SECONDARY"
+
+	echo "Start Multi-Site replication in SECONDARY mode"
+
+        ${SCRIPTS_PATH}/start_multi_site_replication > ${LOG_FILE} 2>&1
+
+        cat ${LOG_FILE}
+
+        check_source_server
+
+	check_receiver_server
+
+        stat_check
+else
+	echo "multi_site paramter not defined or defined wrongly !!!"
+	echo "Please Check ydbenv before process"
+fi

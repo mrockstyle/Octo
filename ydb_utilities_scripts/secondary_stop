@@ -1,0 +1,16 @@
+#!/bin/bash
+
+DT=`date +%c`
+SCRIPTS_PATH=${UTIL_DIR}
+LOG_PATH=${ydb_dir}/log
+LOG_FILE=${LOG_PATH}/stop_replication.log_`date +"%y%m%d-%H%M%S"`
+
+. ${SCRIPTS_PATH}/replication_stop
+. ${SCRIPTS_PATH}/replication_check
+
+function="Stop replication in SECONDARY mode"
+echo "$DT $function"
+	
+	stop_replication_in_secondary_mode 2>&1 | tee ${LOG_FILE} 
+
+	check_source_server

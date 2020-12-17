@@ -1,0 +1,20 @@
+#!/bin/bash
+DT=`date +%c`
+state=$1
+
+stop_replication_in_primary_mode(){
+
+	echo "$DT Stop Replication Active Source Server"
+	mupip replicate -source -shutdown -timeout=2
+}
+
+stop_replication_in_secondary_mode(){
+	
+	echo "$DT Stop Replication Receiver Server"
+	mupip replicate -receiver -shutdown -timeout=2
+	echo "$DT Stop Replication Passive Source Server"
+        mupip replicate -source -shutdown -timeout=2
+
+}
+
+

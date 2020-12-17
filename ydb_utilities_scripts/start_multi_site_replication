@@ -1,0 +1,59 @@
+#!/bin/bash
+
+multi_site_file=${ydb_dir}/gbls/multi-site.repl
+
+
+ROW=`cat ${multi_site_file} | wc -l`
+
+
+. ${ydb_dir}/ydbenv
+. ${UTIL_DIR}/replication_start
+
+for i in $(eval echo {1..$ROW})
+do
+
+        if [[ ! $i -eq  1  ]]
+        then
+		### Extract Multi-Site Replication data from multi-site.repl
+
+                HOST=`awk -F "|" 'FNR == '''$i''' {print $1 }' ${multi_site_file}`
+		secondary_ip=`awk -F "|" 'FNR == '''$i''' {print $2 }' ${multi_site_file}`
+		ydb_repl_instname_tmp=`awk -F "|" 'FNR == '''$i''' {print $3 }' ${multi_site_file}`
+		ydb_repl_secondary_instname=`awk -F "|" 'FNR == '''$i''' {print $4 }' ${multi_site_file}`
+		repl_port=`awk -F "|" 'FNR == '''$i''' {print $5 }' ${multi_site_file}`
+        	repl_listen_port=`awk -F "|" 'FNR == '''$i''' {print $6 }' ${multi_site_file}`
+
+		if [[ $MODE == "PRIMARY" ]]
+		then
+			if [[ $ydb_repl_instname_tmp == $ydb_repl_instname ]]
+			then
+				continue
+			else
+				### Set Replication Secondary Instance Name as Replication Instance Name 
+				### Because In Primary mode Replication Instance Name and Replication Secondary Instance Name are switch	
+				
+				ydb_repl_secondary_instname=$ydb_repl_instname_tmp
+				
+				### The same as Replication port and Replication Listen Port
+				
+				repl_port=$repl_listen_port
+				echo $secondary_ip $ydb_repl_secondary_instname $repl_port
+				echo "Start Replication to ${ydb_repl_secondary_instname}"
+				start_replication_in_primary_mode	
+
+			fi
+		elif [[ $MODE == "SECONDARY" ]]
+		then
+
+			if [[ ! $ydb_repl_instname_tmp == $ydb_repl_instname ]]
+			then
+				continue
+			else
+				start_replication_in_secondary_mode
+			fi
+		else
+			echo "MODE not Defined !!!"
+			exit 1
+		fi
+	fi
+done

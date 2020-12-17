@@ -1,0 +1,154 @@
+#!/bin/bash
+
+DT=`date +%c`
+
+stat_check(){
+	
+	### Check State Of Previous Command ###
+	
+	STAT=$?
+	if [ ${STAT} -eq 0 ]
+	then
+		### If Success echo success ###
+		echo "$DT ${function} is successful"
+	else
+		### If Fail echo fail and return anythings but 0 to make the shell aware of failure when echo $? ###
+
+		echo "$DT ${function} is fail !!!!"
+		exit ${exit_code}
+	fi
+}
+
+start_replication_in_primary_mode(){
+	
+	### Check If YottaDB Replication Instance Existed ###
+	if [ ! -e ${ydb_repl_instance} ]
+        then
+		### Define function paremeter for stat check ###
+		
+		function="Create Replication Instance"
+
+		### Define exit code parameter for stat check ###
+
+		exit_code=1
+		
+		#### Create YottaDB Replication Instance If it dose not exist ###
+                
+		echo "$DT Create Replication Instance ${ydb_repl_instname}"
+		echo "$DT mupip replicate -instance_create -name=${ydb_repl_instname}"
+		mupip replicate -instance_create -name=${ydb_repl_instname}
+
+		stat_check
+
+        else
+		### Echo YottaDB Replication Instance Exist If it exist ###
+
+                echo "$DT ${ydb_repl_instance} exist"
+        fi
+	
+	### Define function paremeter for stat check ###
+
+	function="Start Replication in PRIMARY Mode"
+
+	### Define exit code parameter for stat check ###
+
+        exit_code=2
+	
+	echo "$DT ${function}"
+
+	### Check If apply replication filter ot not ###
+
+        if [ -z $filter ]
+        then
+
+		### Start YottaDB Active Source Server without replication filter #### 
+
+		echo "$DT mupip replicate -source -start -rootprimary -secondary=${secondary_ip}:${repl_port} -instsecondary=${ydb_repl_secondary_instname} -log=${ydb_log}/${ydb_repl_secondary_instname}_source_server.log"
+
+                mupip replicate -source -start -rootprimary -secondary=${secondary_ip}:${repl_port} -instsecondary=${ydb_repl_secondary_instname} -log=${ydb_log}/${ydb_repl_secondary_instname}_source_server.log
+        	
+	else
+		### Start YottaDB Active Source Server with replication filter ####
+
+		echo "$DT mupip replicate -source -start -rootprimary -secondary=${secondary_ip}:${repl_port} -instsecondary=${ydb_repl_secondary_instname} -filter=${filter} -log=${ydb_log}/${ydb_repl_secondary_instname}_source_server.log"
+
+                mupip replicate -source -start -rootprimary -secondary=${secondary_ip}:${repl_port} -instsecondary=${ydb_repl_secondary_instname} -filter=${filter} -log=${ydb_log}/${ydb_repl_secondary_instname}_source_server.log
+	
+	fi
+
+	### check state of start replication command ###
+
+	stat_check
+}
+
+start_replication_in_secondary_mode(){
+
+	### Check If YottaDB Replication Instance Existed ###
+	if [ ! -e ${ydb_repl_instance} ]
+        then
+		### Define function paremeter for stat check ###
+
+                function="Create Replication Instance"
+
+                ### Define exit code parameter for stat check ###
+
+                exit_code=1
+
+                #### Create YottaDB Replication Instance If it dose not exist ###
+
+                echo "$DT mupip replicate -instance_create -name=${ydb_repl_instname}"
+		mupip replicate -instance_create -name=${ydb_repl_instname}
+        else
+                echo "$DT ${ydb_repl_instance} exist"
+        fi
+
+	### Define function paremeter for stat check ###
+
+	function="Start Replication in SECONDARY Mode"
+
+	### Define exit code parameter for stat check ###
+
+	exit_code=2
+
+	### Start YottaDB Passive Source Server ###
+
+	echo "$DT mupip replicate -source -start -passive -instsecondary=${ydb_repl_secondary_instname} -log=${ydb_log}/${ydb_repl_secondary_instname}_source_server.log"
+
+        mupip replicate -source -start -passive -instsecondary=${ydb_repl_secondary_instname} -log=${ydb_log}/${ydb_repl_secondary_instname}_source_server.log
+
+	### Check state of start replication command ###
+	stat_check
+
+
+	### Define function paremeter for stat check ###
+
+        function="Start Replication in SECONDARY Mode"
+
+        ### Define exit code parameter for stat check ###
+
+        exit_code=3
+
+	
+	### Check If apply replication filter ot not ###
+
+        if [ -z $filter ]
+        then
+		
+		### Start YottaDB Receiver Server without replication filter ####
+
+		echo "$DT mupip replicate -receiver -start -listenport=${repl_listen_port} -log=${ydb_log}/${ydb_repl_instname}_receiver.log"
+
+                mupip replicate -receiver -start -listenport=${repl_listen_port} -log=${ydb_log}/${ydb_repl_instname}_receiver.log
+
+        else
+		### Start YottaDB Receiver Server with replication filter ####
+
+		echo "$DT mupip replicate -receiver -start -listenport=${repl_listen_port} -filter=${filter} -log=${ydb_log}/${ydb_repl_instname}_receiver.log"
+
+                mupip replicate -receiver -start -listenport=${repl_listen_port} -filter=${filter} -log=${ydb_log}/${ydb_repl_instname}_receiver.log
+
+        fi
+
+	### Check state of start replication command ###
+	stat_check
+}
